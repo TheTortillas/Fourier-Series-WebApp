@@ -1,0 +1,20 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+/* Declarar n como entero */
+declare(n, integer);
+result: (1/6)*(integrate((t^3)*exp(-%i*(%pi*n*t)/3), t, -3, 3));
+ratsimp_result: ratsimp(result);
+demoivre_result: demoivre(ratsimp_result);
+demoivre_simp_result: ratsimp(demoivre_result);
+factored_result: factor(demoivre_simp_result);
+
+n_dependent_part: coeff(factored_result, n, 2);
+
+/*final_result = ratsimp(subst((cos(n*%pi)), exp(%i*%pi*n), (1/6)*(integrate ((t**3)*exp(-%i*(%pi*n*t)/3), t, -3, 3))));*/;
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

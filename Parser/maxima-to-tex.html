@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Convertidor de Maxima a LaTeX</title>
+    <!-- Incluimos la librería math.js desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.min.js"></script>
+  </head>
+  <body>
+    <h1>Convertidor de Maxima a LaTeX</h1>
+    <textarea
+      id="maximaInput"
+      rows="5"
+      cols="60"
+      placeholder="Ingresa la expresión de Maxima aquí"
+    ></textarea
+    ><br />
+    <button onclick="convertir()">Convertir a LaTeX</button>
+    <h2>Salida LaTeX:</h2>
+    <pre id="latexOutput"></pre>
+
+    <script>
+      function convertir() {
+        var maximaExpr = document.getElementById("maximaInput").value;
+        var latexOutput = convertirMaximaALatex(maximaExpr);
+        document.getElementById("latexOutput").textContent = latexOutput;
+      }
+
+      function convertirMaximaALatex(maximaExpr) {
+        // Reemplazamos %pi por pi
+        var expr = maximaExpr
+          .replace(/%pi/g, "pi")
+          .replace(/%i/g, "i")
+          .replace(/%e/g, "e");
+
+        // Analizamos la expresión con math.js
+        try {
+          var node = math.parse(expr);
+
+          // Definimos manejadores personalizados para LaTeX
+          var customLatex = node.toTex({
+            parenthesis: "keep",
+            implicit: "show",
+            handler: {
+              OperatorNode: function (node, options) {
+                if (node.op === "*") {
+                  return node.args
+                    .map(function (arg) {
+                      return arg.toTex(options);
+                    })
+                    .join(" \\cdot ");
+                } else if (node.op === "/") {
+                  return (
+                    "\\frac{" +
+                    node.args[0].toTex(options) +
+                    "}{" +
+                    node.args[1].toTex(options) +
+                    "}"
+                  );
+                } else {
+                  return node.toTex(options);
+                }
+              },
+              SymbolNode: function (node, options) {
+                if (node.name === "pi") {
+                  return "\\pi";
+                } else if (node.name === "i") {
+                  return "i";
+                } else if (node.name === "e") {
+                  return "e";
+                } else {
+                  return node.toTex(options);
+                }
+              },
+            },
+          });
+
+          // Eliminamos el reemplazo manual de paréntesis
+          // customLatex = customLatex.replace(/\(/g, '\\left(');
+          // customLatex = customLatex.replace(/\)/g, '\\right)');
+
+          return customLatex;
+        } catch (err) {
+          return "Error al analizar la expresión: " + err.message;
+        }
+      }
+    </script>
+  </body>
+</html>

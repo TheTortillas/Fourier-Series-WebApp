@@ -1,0 +1,15 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+load("fourie");
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+fourexpand(x)
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

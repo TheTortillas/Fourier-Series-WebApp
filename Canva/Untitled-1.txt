@@ -1,0 +1,37 @@
+ // Convertir el div en un campo de entrada MathQuill
+      var mathField = MQ.MathField(mathFieldSpan, {
+        spaceBehavesLikeTab: true, // Presionar espacio actúa como tabulación
+        handlers: {
+          edit: function () {
+            // Cuando se edite la ecuación
+            var enteredMath = mathField.latex(); // Obtener el LaTeX ingresado
+            latexOutput.textContent = enteredMath; // Mostrar el LaTeX generado en el contenedor
+
+            // Obtener el LaTeX generado desde latexOutput y parsearlo a Maxima
+            var outputTex = latexOutput.textContent; // Obtener la expresión LaTeX generada y mostrada
+            var maximaExpression = latexToMaxima(outputTex); // Convertir el LaTeX a Maxima
+            maximaOutput.textContent = maximaExpression; // Mostrar el Maxima generado
+          },
+        },
+      });
+
+      // Función para convertir LaTeX a formato Maxima
+      function latexToMaxima(latex) {
+        // Definir reglas para convertir los comandos de LaTeX a Maxima.
+        let maximaExpr = latex
+          .replace(/\^/g, "**") // Reemplazar exponentes
+          .replace(/\\frac{([^}]+)}{([^}]+)}/g, "($1)/($2)") // Reemplazar fracciones
+          .replace(/\\sqrt{([^}]+)}/g, "sqrt($1)") // Reemplazar raíces
+          .replace(/\\cdot/g, "*") // Reemplazar multiplicación (\cdot) por asterisco (*)
+          // Reemplazar paréntesis \left( \right) por ()
+          .replace(/\\left\(/g, "(")
+          .replace(/\\right\)/g, ")")
+          // Reemplazar llaves \left\{ \right\} por ()
+          .replace(/\\left\{/g, "(")
+          .replace(/\\right\}/g, ")")
+          // Reemplazar corchetes \left\[ \right\] por ()
+          .replace(/\\left\[/g, "(")
+          .replace(/\\right\]/g, ")");
+
+        // Puedes agregar más reglas aquí para otros operadores o funciones.
+        return maximaExpr;

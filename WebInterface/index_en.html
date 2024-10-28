@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fourier Series Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+        margin: 0;
+      }
+
+      .container {
+        text-align: center;
+        background-color: white;
+        padding: 30px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin: 15px 0 5px;
+      }
+
+      select,
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      #halfRangeExtension {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Fourier Series Calculator</h1>
+
+      <!-- Primer combobox: Tipo de serie -->
+      <label for="type">Choose type:</label>
+      <select id="type" name="type" onchange="handleTypeChange()">
+        <option value="" disabled selected>Select a Fourier Series type</option>
+        <option value="Trigonometric">Trigonometric</option>
+        <option value="Complex">Complex</option>
+      </select>
+
+      <!-- Segundo combobox: Tipo de extensión -->
+      <label for="extension">Choose extension:</label>
+      <select
+        id="extension"
+        name="extension"
+        onchange="handleExtensionChange()"
+      >
+        <option value="" disabled selected>Choose the extension type</option>
+        <option value="Over a Period">Over a Period</option>
+        <option value="Half-Range">Half-Range</option>
+      </select>
+
+      <!-- Opciones adicionales si se elige Half-Range -->
+      <div id="halfRangeExtension">
+        <label for="halfRange">Choose Half-Range Extension:</label>
+        <select id="halfRange" name="halfRange">
+          <option value="" disabled selected>Choose the extension type</option>
+          <option value="Even">Even Extension (Cosine Series)</option>
+          <option value="Odd">Odd Extension (Sine Series)</option>
+          <option value="Periodic">
+            Periodic Extension (Cosine and Sine Series)
+          </option>
+        </select>
+      </div>
+
+      <!-- Input para la función f(x) -->
+      <label for="function">f(x) =</label>
+      <input
+        type="text"
+        id="function"
+        name="function"
+        placeholder="Enter the function"
+      />
+    </div>
+
+    <script>
+      // Maneja los cambios en el combobox de tipo
+      function handleTypeChange() {
+        const type = document.getElementById("type").value;
+
+        // Restablece el valor por defecto de "Choose extension"
+        const extension = document.getElementById("extension");
+        extension.selectedIndex = 0;
+
+        // Oculta y restablece el valor por defecto de "Choose Half-Range Extension"
+        const halfRangeExtension =
+          document.getElementById("halfRangeExtension");
+        const halfRange = document.getElementById("halfRange");
+        halfRange.selectedIndex = 0;
+        halfRangeExtension.style.display = "none";
+      }
+
+      // Maneja los cambios en el combobox de extensión
+      function handleExtensionChange() {
+        const type = document.getElementById("type").value;
+        const extension = document.getElementById("extension").value;
+
+        // Muestra el tercer combobox solo si es "Trigonométrica" y "Half-Range"
+        const halfRangeExtension =
+          document.getElementById("halfRangeExtension");
+        const halfRange = document.getElementById("halfRange");
+
+        if (type === "Trigonometric" && extension === "Half-Range") {
+          halfRangeExtension.style.display = "block";
+        } else {
+          halfRangeExtension.style.display = "none";
+          // Restablece el valor por defecto de "Choose Half-Range Extension"
+          halfRange.selectedIndex = 0;
+        }
+      }
+    </script>
+  </body>
+</html>

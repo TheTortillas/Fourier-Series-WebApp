@@ -1,0 +1,27 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+/* Definir el número complejo */
+z : 4 + 3*%i;
+
+/* Calcular el módulo */
+modulo : abs(z);
+
+/* Calcular el argumento */
+argumento : carg(z);
+
+/* Mostrar los resultados en decimal */
+modulo_decimal : float(modulo);
+argumento_decimal : float(argumento);
+
+/* Mostrar los resultados */
+modulo_decimal;
+argumento_decimal;
+
+
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

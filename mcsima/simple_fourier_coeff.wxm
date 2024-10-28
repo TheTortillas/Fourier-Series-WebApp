@@ -1,0 +1,44 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+/* Declarar que n es un entero */
+declare(n, integer);
+
+/* Definir la función para calcular el coeficiente a_n */
+a_n(f, T) := (2/T) * integrate(f * cos(2*%pi*n*x/T), x, -(T/2), (T/2));
+
+/* Definir la función para calcular el coeficiente b_n */
+b_n(f, T) := (2/T) * integrate(f * sin(2*%pi*n*x/T), x, -(T/2), (T/2));
+
+/* Definir la función para calcular el coeficiente a_0 */
+a_0(f, T) := (1/T) * integrate(f, x, -(T/2), (T/2));
+
+/* Definir un ejemplo de función f(x) = x^3 */
+f(x) :=x;
+
+/* Definir el periodo de la función */
+T : 2*%pi;
+
+/* Calcular los coeficientes a_0, a_n y b_n para un valor específico de n */
+a0: a_0(f(x), T);
+a1: a_n(f(x), T);
+b1: b_n(f(x), T);
+
+
+/* Mostrar los resultados */
+/* print("Coeficiente a_1: ", a1);
+print("Coeficiente b_1: ", b1); */
+
+
+/* [wxMaxima: input   end   ] */
+/* [wxMaxima: question  start ] */
+<math><st>Is </st><mi lisp="*var-tag*">periodo</mi><st> positive, negative or zero?</st></math>
+/* [wxMaxima: question  end   ] */
+/* [wxMaxima: answer  start ] */
+positive;
+/* [wxMaxima: answer  end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

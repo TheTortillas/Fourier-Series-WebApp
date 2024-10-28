@@ -1,0 +1,48 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+declare(n, integer);
+func: sinh(x);
+/*func: ((3*x**3)-2*x+3);*/
+T: 2*%pi;
+series_cosine_core: cos((n*%pi*x)/((T/2)));
+series_sine_core: sin((n*%pi*x)/((T/2)));
+
+a0: (1/(T/2)) * integrate((func), x ,-(T/2), (T/2));
+an: (1/(T/2)) * integrate((func) * series_cosine_core, x ,-(T/2), (T/2));
+bn: (1/(T/2)) * integrate((func) * series_sine_core, x ,-(T/2), (T/2));
+
+a0_simp: ratsimp(a0);
+an_simp: ratsimp(an);
+bn_simp: ratsimp(bn);
+
+Coeff_A0: factor(a0_simp)/2;
+Coeff_An: factor(an_simp);
+Coeff_Bn: factor(bn_simp);
+
+/* Definimos el rango de n positivo y negativo */
+n1 : 1;
+n2 : 2;
+
+/* Creamos la lista de An */
+lista_An : makelist(subst(n=i, Coeff_An * series_cosine_core), i, n1, n2);
+
+/* Creamos la lista de Bn */
+lista_Bn : makelist(subst(n=i, Coeff_Bn * series_sine_core), i, n1, n2);
+
+/* Sumamos los términos positivos y negativos (con la lista de negativos invertida) */
+lista_completa : lista_An + lista_Bn;
+
+/* Crear la serie final añadiendo A0 al principio de la lista completa */
+/*serie_final: cons(Coeff_A0/2, lista_completa);*/
+
+serie_final: ratsimp(lista_completa);
+
+serie_factor: factor(serie_final);
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

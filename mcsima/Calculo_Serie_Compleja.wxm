@@ -1,0 +1,70 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+declare(n, integer);
+func: x**3;
+T: 6;
+series_core: (exp((%i*n*%pi*x)/((T/2))));
+
+cn: (1/(T)) * integrate((func) * (exp(-(%i*n*%pi*x)/((T/2)))), x ,-(T/2), (T/2));
+c0: (1/(T)) * integrate((func), x ,-(T/2), (T/2));
+
+tellsimpafter(exp(%i * %pi * n), (-1)**n)$
+tellsimpafter(exp(%i * 2 * %pi * n), 1)$
+
+c0_simp: ratsimp(c0)$
+cn_simp: ratsimp(cn)$
+
+c0_simp: ratsimp(c0_simp);
+cn_simp: ratsimp(cn_simp);
+
+Coeff_0: factor(c0_simp);
+Coeff_n: factor(cn_simp);
+
+/* Definimos el rango de n positivo y negativo */
+n1 : 1;
+n2 : 10;
+
+/* Creamos la lista de términos positivos */
+lista_positivos : makelist(subst(n=i, Coeff_n * series_core ), i, n1, n2);
+
+/* Creamos la lista de términos negativos */
+lista_negativos : makelist(subst(n=i, Coeff_n * series_core), i, -n2, -n1);
+
+/* Invertimos el orden de la lista de términos negativos */
+lista_negativos_invertida : reverse(lista_negativos);
+
+/* Sumamos los términos positivos y negativos (con la lista de negativos invertida) */
+lista_completa : lista_positivos + lista_negativos_invertida;
+
+serie_demoivre: demoivre(lista_completa);
+
+serie_simp: ratsimp(serie_demoivre);
+
+serie_factor: factor(serie_simp);
+
+/*string(serie_simp);*/
+
+kill(all);
+/* [wxMaxima: input   end   ] */
+/* [wxMaxima: question  start ] */
+<math><st>Is </st><mo>-</mo><mrow lisp="wxxml-paren"><p lisp="wxxml-paren"><mn>2</mn><h>*</h><s>%i</s><h>*</h><mi lisp="*var-tag*">n</mi></p></mrow><mo>-</mo><mn>1</mn><st> equal to </st><mo>-</mo><mn>1</mn><st>?</st></math>
+/* [wxMaxima: question  end   ] */
+/* [wxMaxima: answer  start ] */
+1;
+/* [wxMaxima: answer  end   ] */
+
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

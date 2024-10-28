@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Series de Fourier</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #34495e;
+      }
+
+      select,
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 5px;
+        font-size: 1rem;
+        color: #333;
+      }
+
+      select:focus,
+      input[type="text"]:focus,
+      input[type="number"]:focus {
+        border-color: #2980b9;
+        outline: none;
+        box-shadow: 0 0 5px rgba(41, 128, 185, 0.5);
+      }
+
+      .form-group-radio {
+        margin-bottom: 15px;
+      }
+
+      .form-group-radio label {
+        display: block;
+        margin-bottom: 5px;
+        color: #34495e;
+        font-weight: bold;
+      }
+
+      .form-group-radio input {
+        margin-right: 5px;
+      }
+
+      .radio-options {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .radio-options li {
+        margin-bottom: 10px;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+      }
+
+      .piece {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .piece input {
+        width: 30%;
+      }
+
+      .piece button {
+        padding: 10px;
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .piece button:hover {
+        background-color: #c0392b;
+      }
+
+      #singleFuncInput,
+      #piecewiseFuncInput {
+        margin-bottom: 20px;
+      }
+
+      #halfRangeExtension {
+        margin-top: 15px;
+      }
+
+      button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #27ae60;
+      }
+
+      @media (max-width: 768px) {
+        .piece input {
+          width: 28%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Calculadora de Series de Fourier</h1>
+
+      <!-- Primer combobox: Tipo de serie -->
+      <div class="form-group">
+        <label for="type">Elige el tipo de serie:</label>
+        <select id="type" name="type" onchange="handleTypeChange()">
+          <option value="" disabled selected>
+            Selecciona el tipo de Serie de Fourier
+          </option>
+          <option value="Trigonometric">Trigonométrica</option>
+          <option value="Complex">Compleja</option>
+        </select>
+      </div>
+
+      <!-- Segundo combobox: Tipo de extensión -->
+      <div class="form-group">
+        <label for="extension">Elige la extensión:</label>
+        <select
+          id="extension"
+          name="extension"
+          onchange="handleExtensionChange()"
+        >
+          <option value="" disabled selected>Elige el tipo de extensión</option>
+          <option value="Over a Period">Sobre un Periodo</option>
+          <option value="Half-Range">Medio Rango</option>
+        </select>
+      </div>
+
+      <!-- Opciones adicionales si se elige Half-Range -->
+      <div class="form-group" id="halfRangeExtension">
+        <label for="halfRange">Elige la Extensión de Medio Rango:</label>
+        <select id="halfRange" name="halfRange">
+          <option value="" disabled selected>Elige el tipo de extensión</option>
+          <option value="Even">Extensión Par (Serie de Coseno)</option>
+          <option value="Odd">Extensión Impar (Serie de Seno)</option>
+          <option value="Periodic">
+            Extensión Periódica (Serie de Coseno y Seno)
+          </option>
+        </select>
+      </div>
+
+      <!-- Radio buttons para seleccionar el tipo de función -->
+      <div class="form-group-radio">
+        <label>Tipo de función:</label>
+        <ul class="radio-options">
+          <li>
+            <input type="radio" name="funcType" value="single" checked />
+            Función Contínua
+          </li>
+          <li>
+            <input type="radio" name="funcType" value="piecewise" />
+            Función a Trozos
+          </li>
+        </ul>
+      </div>
+
+      <!-- Input para función continua -->
+      <div id="singleFuncInput">
+        <div class="input-group">
+          <div class="form-group">
+            <label for="func">Función f(x):</label>
+            <input type="text" id="func" placeholder="Función f(x)" />
+          </div>
+          <div class="form-group">
+            <label for="L">Intervalo L:</label>
+            <input type="number" id="L" placeholder="Intervalo L" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Input para función a trozos -->
+      <div id="piecewiseFuncInput" style="display: none">
+        <label for="pieces">Función f(x):</label>
+        <div id="pieceContainer">
+          <div class="piece">
+            <input type="text" placeholder="Función f(x)" class="pieceFunc" />
+            <input
+              type="number"
+              placeholder="Inicio Intervalo"
+              class="pieceStart"
+            />
+            <input type="number" placeholder="Fin Intervalo" class="pieceEnd" />
+            <button onclick="addPiece()">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Maneja los cambios en el combobox de tipo
+      function handleTypeChange() {
+        const type = document.getElementById("type").value;
+
+        // Restablece el valor por defecto de "Elige la extensión"
+        const extension = document.getElementById("extension");
+        extension.selectedIndex = 0;
+
+        // Oculta y restablece el valor por defecto de "Elige la Extensión de Medio Rango"
+        const halfRangeExtension =
+          document.getElementById("halfRangeExtension");
+        const halfRange = document.getElementById("halfRange");
+        halfRange.selectedIndex = 0;
+        halfRangeExtension.style.display = "none";
+      }
+
+      // Maneja los cambios en el combobox de extensión
+      function handleExtensionChange() {
+        const type = document.getElementById("type").value;
+        const extension = document.getElementById("extension").value;
+
+        // Muestra el tercer combobox solo si es "Trigonométrica" y "Medio Rango"
+        const halfRangeExtension =
+          document.getElementById("halfRangeExtension");
+        const halfRange = document.getElementById("halfRange");
+
+        if (type === "Trigonometric" && extension === "Half-Range") {
+          halfRangeExtension.style.display = "block";
+        } else {
+          halfRangeExtension.style.display = "none";
+          // Restablece el valor por defecto de "Elige la Extensión de Medio Rango"
+          halfRange.selectedIndex = 0;
+        }
+      }
+
+      // Función para añadir un trozo
+      function addPiece() {
+        const container = document.getElementById("pieceContainer");
+        const pieceHtml = `
+            <div class="piece">
+                <input type="text" placeholder="Función f(x)" class="pieceFunc">
+                <input type="number" placeholder="Inicio Intervalo" class="pieceStart">
+                <input type="number" placeholder="Fin Intervalo" class="pieceEnd">
+                <button onclick="removePiece(this)">-</button>
+            </div>
+        `;
+        container.innerHTML += pieceHtml;
+      }
+
+      // Función para eliminar un trozo
+      function removePiece(buttonElement) {
+        const container = document.getElementById("pieceContainer");
+        container.removeChild(buttonElement.parentElement);
+      }
+
+      // Mostrar u ocultar inputs según tipo de función
+      document.querySelectorAll('input[name="funcType"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+          const singleInput = document.getElementById("singleFuncInput");
+          const piecewiseInput = document.getElementById("piecewiseFuncInput");
+
+          if (this.value === "single") {
+            singleInput.style.display = "block";
+            piecewiseInput.style.display = "none";
+          } else {
+            singleInput.style.display = "none";
+            piecewiseInput.style.display = "block";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

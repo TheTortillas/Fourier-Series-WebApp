@@ -1,0 +1,37 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+complex_parseval : (1/6) * integrate((t^3)^2, t, -3, 3);
+/*declare(n, integer);*/
+complex_coeff : abs( (%i*(-1)^n)*((27*(n^2*%pi^2-6))/(n^3*%pi^3)))^2;
+a:abs((-1)^n);
+
+/* Definimos el rango de n positivo y negativo */
+n1 : 1;
+n2 : 4;
+
+/* Creamos la lista de términos positivos */
+lista_positivos : makelist(subst(n=i, complex_coeff), i, n1, n2);
+
+/* Creamos la lista de términos negativos */
+lista_negativos : makelist(subst(n=i, complex_coeff), i, -n2, -n1);
+
+/* Invertimos el orden de la lista de términos negativos */
+lista_negativos_invertida : reverse(lista_negativos);
+
+/* Sumamos los términos positivos y negativos (con la lista de negativos invertida) */
+lista_completa : lista_positivos + lista_negativos_invertida;
+
+/* Mostramos la lista completa */
+lista_completa;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+ ;
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

@@ -1,0 +1,44 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+/* Definimos la expresión original */
+expr : (%i*((-1)^n-1)/(n*%pi))*%e^(%i*n*x);
+/*expr: -((%e^(-(%i*%pi*n))*((%i*%e^(2*%pi)*n+%e^(2*%pi))*%e^(2*%i*%pi*n)-%i*n-1))/(2*%e^%pi*%pi*n^2-4*%e^%pi*%i*%pi*n-2*%e^%pi*%pi)) * %e^(-%i*n*x);*/
+
+/*constante: %i/%pi;*/
+
+/* Definimos el rango de n positivo y negativo */
+n1 : 1;
+n2 : 3;
+
+/* Creamos la lista de términos positivos */
+lista_positivos : makelist(subst(n=i, expr), i, n1, n2);
+
+/* Creamos la lista de términos negativos */
+lista_negativos : makelist(subst(n=i, expr), i, -n2, -n1);
+
+/* Invertimos el orden de la lista de términos negativos */
+lista_negativos_invertida : reverse(lista_negativos);
+
+/* Sumamos los términos positivos y negativos (con la lista de negativos invertida) */
+lista_completa : lista_positivos + lista_negativos_invertida;
+
+/* Mostramos la lista completa */
+lista_completa;
+
+serie_demoivre: demoivre(lista_completa);
+
+serie_simp: ratsimp(serie_demoivre);
+
+serie_final:  serie_simp;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

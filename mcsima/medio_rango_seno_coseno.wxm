@@ -1,0 +1,64 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+/* Función a trozos */
+func : matrix([1, 0, 1], [0,1, 3], [-1, 3, 5]);
+/* func : matrix([exp(-x), 0, 1]); */
+
+/* Obtenemos la cantidad de trozos */
+pieces: length(func);
+
+/* Obtenemos a -T/2 y T/2 */
+inicio: func[1][2];
+fin: func[length(func)][3];
+
+declare(n, integer);
+
+/* Calcular el periodo */
+T: fin - inicio;
+
+/*Núcleo de los coeficientes */
+series_cosine_core: (cos((n*%pi*x)/((T))));
+series_sine_core: sin((n*%pi*x)/((T)));
+
+/* Nucleo de los coeficientes para una extensión periodica
+series_cosine_core: (cos((n*%pi*x)/((T/2))));
+series_sine_core: sin((n*%pi*x)/((T/2))
+    */
+
+a0_acum: 0;
+an_acum: 0;
+bn_acum: 0;
+for i:1 thru pieces do
+(
+    trozo: func[i],
+    piece_func: trozo[1],
+    start: trozo[2],
+    end: trozo[3],
+        
+    a0: (2/(T)) * integrate((piece_func), x ,(start), (end)),
+    an: (2/(T)) * integrate((piece_func) * series_cosine_core, x ,(start), (end)),
+    bn: (2/(T)) * integrate((piece_func) * series_sine_core, x ,(start), (end)),
+    
+    a0_acum: a0 + a0_acum,
+    an_acum: an + an_acum,
+    bn_acum: bn + bn_acum
+/*print("piece = ", piece_func),
+print("start = ", start),
+print("end = ", end)*/
+)$
+
+a0_simp: ratsimp(a0_acum);
+an_simp: ratsimp(an_acum);
+bn_simp: ratsimp(bn_acum);
+
+Coeff_A0: factor(a0_simp/2);
+Coeff_An: factor(an_simp);
+Coeff_Bn: factor(bn_simp);
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$

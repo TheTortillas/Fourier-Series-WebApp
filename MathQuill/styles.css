@@ -1,0 +1,62 @@
+/* Estilos generales */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Estilo para el campo MathQuill */
+.math-field {
+  border: 2px solid #007bff;
+  padding: 10px;
+  min-width: 200px;
+  min-height: 40px;
+  font-size: 1.5em;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.1);
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.math-field:hover {
+  border-color: #0056b3;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.latex-text {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.latex-output {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.2em;
+  border-radius: 5px;
+  color: #333;
+  word-wrap: break-word;
+}
