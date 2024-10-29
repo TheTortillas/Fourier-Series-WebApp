@@ -137,6 +137,12 @@ window.onload = function () {
                 }
             }
         }
+        drawDiscreteLine(2, 0, 5, "#3197FF");
+        drawDiscreteLine(1, 0, 10, "#3197FF");
+        drawDiscreteLine(3, 0, 2.5, "#3197FF");
+
+        drawDiscreteLine(4, 0, 0, "#3197FF");
+
 
         // Llamar a las funciones desde drawScreen()
         drawFunction(function (x) { return x * x * x; }, "#3197FF");
@@ -158,21 +164,57 @@ window.onload = function () {
         drawScreen();
     };
 
+    // Zoom estatico
+    // canvas.onwheel = function (event) {
+    //     unit -= event.deltaY / 10;  // Ajusta el nivel/velocidad de zoom
+
+    //     // Limita el nivel de zoom mínimo
+    //     if (unit < 8) {
+    //         unit = 8;  // Este es el nivel de zoom mínimo. Puedes cambiar 8 por otro valor.
+    //     }
+
+    //     // Limita el nivel de zoom máximo
+    //     if (unit > 1000) {
+    //         unit = 1000;  // Este es el nivel de zoom máximo. Puedes cambiar 130 por otro valor.
+    //     }
+
+    //     drawScreen();  // Redibuja el canvas con el nuevo nivel de zoom
+    // };
+    
+
+    // Zoom dinámico
     canvas.onwheel = function (event) {
-        unit -= event.deltaY / 10;  // Ajusta el nivel/velocidad de zoom
-
-        // Limita el nivel de zoom mínimo
-        if (unit < 8) {
-            unit = 8;  // Este es el nivel de zoom mínimo. Puedes cambiar 8 por otro valor.
-        }
-
-        // Limita el nivel de zoom máximo
-        if (unit > 1000) {
-            unit = 1000;  // Este es el nivel de zoom máximo. Puedes cambiar 130 por otro valor.
-        }
-
-        drawScreen();  // Redibuja el canvas con el nuevo nivel de zoom
+        event.preventDefault();  // Prevent the default scroll behavior
+    
+        // Store the old unit value
+        const oldUnit = unit;
+    
+        // Adjust the unit (zoom level)
+        unit -= event.deltaY / 10;
+    
+        // Limit the zoom level
+        if (unit < 8) unit = 8;
+        if (unit > 1000) unit = 1000;
+    
+        // Calculate the scaling factor
+        const scale = unit / oldUnit;
+    
+        // Get the mouse position relative to the canvas
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+    
+        // Calculate the mathematical coordinates (x0, y0) under the cursor before zoom
+        const x0 = (mouseX - origin.x + offsetX) / oldUnit;
+        const y0 = (mouseY - origin.y + offsetY) / oldUnit;
+    
+        // Adjust offsetX and offsetY to keep the point under the cursor stationary
+        offsetX = offsetX + x0 * (unit - oldUnit);
+        offsetY = offsetY + y0 * (unit - oldUnit);
+    
+        drawScreen();  // Redraw the canvas with the new zoom level
     };
+    
 
     canvas.onmousedown = function (event) {
         drag = true;
@@ -193,6 +235,30 @@ window.onload = function () {
 
     canvas.onmouseup = function (event) {
         drag = false;
+    }
+
+    // Función para dibujar una línea discreta con una bolita hueca al final
+    function drawDiscreteLine(startX, startY, n, color) {
+        const endY = startY + n;
+    
+        // Convertir coordenadas a píxeles
+        const startXPixel = origin.x - offsetX + unit * startX;
+        const startYPixel = origin.y - offsetY - unit * startY;
+        const endYPixel = origin.y - offsetY - unit * endY;
+    
+        // Dibujar la línea
+        ctx.strokeStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(startXPixel, startYPixel);
+        ctx.lineTo(startXPixel, endYPixel);
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+    
+        // Dibujar la bolita hueca al final de la línea
+        ctx.beginPath();
+        ctx.arc(startXPixel, endYPixel, 5, 0, 2 * Math.PI); // Radio de 5 píxeles
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
     }
 
     // Adaptación de la función drawFunction para redibujar cada vez que se actualice el canvas
