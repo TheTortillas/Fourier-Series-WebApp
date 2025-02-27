@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graficador de Funciones</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="input-container">
+      <input
+        type="text"
+        id="function-input"
+        placeholder="Introduce tu función (ej. Math.sin(x))"
+      />
+      <button id="plot-button">Graficar</button>
+    </div>
+
+    <div class="input-container">
+      <input
+        type="text"
+        id="series-input"
+        placeholder="Introduce tu Serie (ej. Math.sin(x))"
+      />
+      <label for="terms-slider">Número de términos:</label>
+      <input
+        type="range"
+        id="terms-slider"
+        min="1"
+        max="100"
+        value="10"
+      />
+      <span id="terms-value">10</span>
+    </div>
+    
+    
+    <canvas id="canvas" width="1200" height="800"></canvas>
+    <div class="input-container">
+      <label for="x-axis-scale">Escala del Eje X:</label>
+      <select id="x-axis-scale">
+        <option value="1">Unidades Enteras</option>
+        <option value="pi">Múltiplos de Pi</option>
+        <option value="e">Múltiplos de e</option>
+      </select>
+    </div>
+    
+    <script src="script.js"></script>
+  </body>
+</html>

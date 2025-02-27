@@ -140,7 +140,6 @@ window.onload = function () {
         drawDiscreteLine(2, 0, 5, "#3197FF");
         drawDiscreteLine(1, 0, 10, "#3197FF");
         drawDiscreteLine(3, 0, 2.5, "#3197FF");
-
         drawDiscreteLine(4, 0, 0, "#3197FF");
 
 
@@ -148,6 +147,8 @@ window.onload = function () {
         drawFunction(function (x) { return x * x * x; }, "#3197FF");
         drawFunction(function (x) { return Math.cos(x); }, "#EA5356");
         drawFunction(function (x) { return Math.exp(x); }, "#FA5386");
+
+        drawFunctionFromAToB(function (x) { return Math.sin(x); }, "#FF5733", -Math.PI/2, Math.PI);
         // Redibujar todas las funciones almacenadas
         functionsList.forEach(item => {
             drawFunction(item.func, item.color);
@@ -164,55 +165,60 @@ window.onload = function () {
         drawScreen();
     };
 
-    // Zoom estatico
+    //Zoom estatico
     // canvas.onwheel = function (event) {
-    //     unit -= event.deltaY / 10;  // Ajusta el nivel/velocidad de zoom
-
-    //     // Limita el nivel de zoom mínimo
-    //     if (unit < 8) {
-    //         unit = 8;  // Este es el nivel de zoom mínimo. Puedes cambiar 8 por otro valor.
+    //     event.preventDefault();  // Evita el scroll predeterminado del navegador
+    
+    //     const zoomFactor = 1.1;
+    //     if (event.deltaY < 0) {
+    //         // Zoom in
+    //         unit *= zoomFactor;
+    //     } else {
+    //         // Zoom out
+    //         unit /= zoomFactor;
     //     }
-
-    //     // Limita el nivel de zoom máximo
-    //     if (unit > 1000) {
-    //         unit = 1000;  // Este es el nivel de zoom máximo. Puedes cambiar 130 por otro valor.
-    //     }
-
+    
+    //     // Limita el nivel de zoom
+    //     unit = Math.max(8, Math.min(unit, 10000));
+    
     //     drawScreen();  // Redibuja el canvas con el nuevo nivel de zoom
     // };
     
 
     // Zoom dinámico
     canvas.onwheel = function (event) {
-        event.preventDefault();  // Prevent the default scroll behavior
+        event.preventDefault();  // Evita el comportamiento de desplazamiento predeterminado
     
-        // Store the old unit value
+        // Almacena el valor antiguo de 'unit'
         const oldUnit = unit;
     
-        // Adjust the unit (zoom level)
-        unit -= event.deltaY / 10;
+        // Calcula el factor de zoom
+        const zoomSpeed = 0.001;  // Ajusta este valor para cambiar la sensibilidad del zoom
+        const zoomFactor = Math.exp(-event.deltaY * zoomSpeed);
     
-        // Limit the zoom level
-        if (unit < 8) unit = 8;
-        if (unit > 1000) unit = 1000;
+        // Ajusta 'unit' de forma multiplicativa
+        unit *= zoomFactor;
     
-        // Calculate the scaling factor
-        const scale = unit / oldUnit;
+        // Limita el nivel de zoom
+        unit = Math.max(8, Math.min(unit, 1000));
     
-        // Get the mouse position relative to the canvas
+        // Vuelve a calcular el factor de zoom real en caso de que 'unit' haya sido limitado
+        const actualZoomFactor = unit / oldUnit;
+    
+        // Obtiene la posición del ratón relativa al canvas
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
     
-        // Calculate the mathematical coordinates (x0, y0) under the cursor before zoom
+        // Calcula las coordenadas matemáticas (x0, y0) bajo el cursor antes del zoom
         const x0 = (mouseX - origin.x + offsetX) / oldUnit;
         const y0 = (mouseY - origin.y + offsetY) / oldUnit;
     
-        // Adjust offsetX and offsetY to keep the point under the cursor stationary
-        offsetX = offsetX + x0 * (unit - oldUnit);
-        offsetY = offsetY + y0 * (unit - oldUnit);
+        // Ajusta 'offsetX' y 'offsetY' para mantener el punto bajo el cursor estacionario
+        offsetX += x0 * (unit - oldUnit);
+        offsetY += y0 * (unit - oldUnit);
     
-        drawScreen();  // Redraw the canvas with the new zoom level
+        drawScreen();  // Redibuja el canvas con el nuevo nivel de zoom
     };
     
 
@@ -281,6 +287,33 @@ window.onload = function () {
 
             previousX = origin.x - offsetX + unit * x;
             previousY = origin.y - offsetY - unit * y;
+        }
+    }
+
+    function drawFunctionFromAToB(mathFunction, color, a, b) {
+        let previousX = undefined;
+        let previousY = undefined;
+        const steps = 1000; // Número de puntos para dibujar
+    
+        for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const x = a + t * (b - a);
+            const y = mathFunction(x);
+    
+            const canvasX = origin.x - offsetX + unit * x;
+            const canvasY = origin.y - offsetY - unit * y;
+    
+            if (previousX !== undefined && previousY !== undefined) {
+                ctx.strokeStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(previousX, previousY);
+                ctx.lineTo(canvasX, canvasY);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+    
+            previousX = canvasX;
+            previousY = canvasY;
         }
     }
 

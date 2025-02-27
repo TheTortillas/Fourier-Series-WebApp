@@ -1,7 +1,8 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { exec } = require('child_process');
-const cors = require('cors');
+
 
 const app = express();
 const port = 3000;
@@ -39,13 +40,14 @@ function execMaxima(command, callback) {
 }
 
 // RUTA PARA CALCULAR SERIE TRINGONOMÉTRICA PARA UNA FUNCIÓN DE UN SOLO TROZO
-app.post('/fourier/entirely-continuous/trigonometric', (req, res) => {
+app.post('/fourier/trigonometric', (req, res) => {
+    console.log("Se ha recibido una solicitud para calcular la serie trigonometrica");
     const { funcion, periodo } = req.body;
 
     // Comandos para los coeficientes
-    const command_a0 = `echo declare(n, integer)$ string(ratsimp(((1/((${periodo})/2)) * integrate(${funcion}, x, -(${periodo}/2), ${periodo}/2)))); | maxima --very-quiet -`;
-    const command_an = `echo declare(n, integer)$ string(ratsimp(((1/((${periodo})/2)) * integrate(((${funcion}) * cos((n*%pi*x)/((${periodo}/2)))), x, -(${periodo}/2), ${periodo}/2)))); | maxima --very-quiet -`;
-    const command_bn = `echo declare(n, integer)$ string(ratsimp(((1/((${periodo})/2)) * integrate(((${funcion}) * sin((n*%pi*x)/((${periodo}/2)))), x, -(${periodo}/2), ${periodo}/2)))); | maxima --very-quiet -`;
+    const command_a0 = `echo "declare(n, integer)$ string(ratsimp(((1/((${periodo})/2)) * integrate(${funcion}, x, -(${periodo}/2), ${periodo}/2))));" | maxima --very-quiet -`;
+    const command_an = `echo "declare(n, integer)$ string(ratsimp(((1/((${periodo})/2)) * integrate(((${funcion}) * cos((n*%pi*x)/((${periodo}/2)))), x, -(${periodo}/2), ${periodo}/2))));" | maxima --very-quiet -`;
+    const command_bn = `echo "declare(n, integer)$ string(ratsimp(((1/((${periodo})/2)) * integrate(((${funcion}) * sin((n*%pi*x)/((${periodo}/2)))), x, -(${periodo}/2), ${periodo}/2))));" | maxima --very-quiet -`;
 
     // Calcular a0, an y bn
     execMaxima(command_a0, (error_a0, a0) => {
@@ -63,7 +65,7 @@ app.post('/fourier/entirely-continuous/trigonometric', (req, res) => {
                     res.status(500).send({ error: `Error calculating bn: ${error_bn.message}` });
                     return;
                 }
-
+                
                 // Enviar los coeficientes como respuesta en formato JSON
                 res.json({ a0, an, bn });
             });
@@ -73,12 +75,12 @@ app.post('/fourier/entirely-continuous/trigonometric', (req, res) => {
 });
 
 // RUTA PARA CALCULAR SERIE EXPONENCIAL PARA UNA FUNCIÓN DE UN SOLO TROZO 
-app.post('/fourier/entirely-continuous/complex', (req, res) => {
+app.post('/fourier/complex', (req, res) => {
     const { funcion, periodo } = req.body;
 
     // Aquí puedes definir los comandos específicos para la serie exponencial
-    const command_c0 = `echo declare(n, integer)$ tellsimpafter(exp(%i*%pi*n), (-1)**n)$ tellsimpafter(exp(%i*2*%pi*n),1)$ string(ratsimp((1/(${periodo})) * integrate((${funcion}), x ,-((${periodo})/2), ((${periodo})/2)))); | maxima --very-quiet -`;
-    const command_cn = `echo declare(n, integer)$ tellsimpafter(exp(%i*%pi*n), (-1)**n)$ tellsimpafter(exp(%i*2*%pi*n),1)$ string(ratsimp((1/(${periodo})) * integrate((${funcion}) * (exp(-(%i*n*%pi*x)/(((${periodo})/2)))), x ,-((${periodo})/2), ((${periodo})/2)))); | maxima --very-quiet -`;
+    const command_c0 = `echo "declare(n, integer)$ tellsimpafter(exp(%i*%pi*n), (-1)**n)$ tellsimpafter(exp(%i*2*%pi*n),1)$ string(ratsimp((1/(${periodo})) * integrate((${funcion}), x ,-((${periodo})/2), ((${periodo})/2))));" | maxima --very-quiet -`;
+    const command_cn = `echo "declare(n, integer)$ tellsimpafter(exp(%i*%pi*n), (-1)**n)$ tellsimpafter(exp(%i*2*%pi*n),1)$ string(ratsimp((1/(${periodo})) * integrate((${funcion}) * (exp(-(%i*n*%pi*x)/(((${periodo})/2)))), x ,-((${periodo})/2), ((${periodo})/2))));" | maxima --very-quiet -`;
 
     execMaxima(command_c0, (error_c0, c0) => {
         if (error_c0) {
@@ -94,6 +96,7 @@ app.post('/fourier/entirely-continuous/complex', (req, res) => {
             res.json({ c0, cn });
         });
     });
+    console.log("Se ha calculado la serie compleja" );
 });
 
 // Añadir más rutas para otros tipos de series
